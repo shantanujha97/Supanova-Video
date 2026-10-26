@@ -1,5 +1,6 @@
 node_modules/
 out/
 *.mp4
+!videos/*.mp4
 *.tgz
 .DS_Store

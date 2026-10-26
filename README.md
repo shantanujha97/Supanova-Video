@@ -4,7 +4,7 @@ A motion-graphics product demo of **Supanova**, a crypto wallet live on Canton N
 Every screen, asset and font comes from the Supanova Figma file; the scene is HTML/CSS animated with **GSAP**, rendered
 deterministically frame-by-frame with **Playwright**, and encoded with **ffmpeg** at 1920×1080, 60 fps.
 
-The rendered videos are attached to this repo's **Releases** (one release per version).
+Every rendered version is in [`videos/`](videos/) — `Supanova_Demo_v1.mp4` … `Supanova_Demo_v10.mp4`.
 
 ## Versions
 
@@ -21,7 +21,7 @@ The rendered videos are attached to this repo's **Releases** (one release per ve
 | v9 | 28.59s | `index9.html` + `scene9.js` | Tagline as its own card sliding into the dashboard, send close-up capped at 2.0× |
 | **v10** | **28.59s** | `index10.html` + `scene10.js` | **v9 + a subtle frosted-glass plate under the app window, with a soft elevation shadow** |
 
-v1–v6 were rendered with the pre-v7 asset crops, kept in `assets_pre_v7/`. Each version is also tagged (`v1` … `v10`).
+v1–v6 were rendered with the pre-v7 asset crops, kept in `assets_pre_v7/`. Each version is its own commit on `main` (commit messages start with the version number), so `git checkout <commit>` gives you that version's exact source.
 
 ## Render
 
