@@ -1,0 +1,17 @@
+{
+  "name": "supanova-demo-video",
+  "version": "1.0.0",
+  "description": "Code-built motion-graphics product demo for Supanova (crypto wallet on Canton Network). HTML/CSS + GSAP, rendered frame-by-frame with Playwright + ffmpeg.",
+  "scripts": {
+    "serve": "python3 -m http.server 8123 --bind 127.0.0.1",
+    "render": "PAGE=index10.html node render.js video Supanova_Demo_v10.mp4 60 0 28.59"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "gsap": "^3.12.5",
+    "sharp": "^0.33.5",
+    "playwright": "1.63.0"
+  },
+  "private": true
+}
