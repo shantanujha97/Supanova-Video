@@ -1,0 +1,144 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>Supanova demo v8</title>
+<style>
+@font-face{font-family:Friends;src:url(fonts/Friends-Regular.ttf);font-weight:400}
+@font-face{font-family:Friends;src:url(fonts/Friends-SemiBold.ttf);font-weight:600}
+html,body{margin:0;background:#000;overflow:hidden}
+#stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:#05060a;font-family:Friends,sans-serif;color:#fff}
+.abs{position:absolute;left:0;top:0}
+canvas{position:absolute;left:0;top:0}
+.world{position:absolute;left:0;top:0;width:1440px;height:832px;transform-origin:0 0;backface-visibility:hidden}
+.world img{position:absolute;display:block}
+.card{position:absolute;left:0;top:0;width:1440px;height:832px;overflow:hidden;border-radius:18px;box-shadow:0 40px 120px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.07)}
+.t{position:absolute;white-space:pre;font-weight:600}
+.caret{display:inline-block;width:2px;background:#fff;margin-left:2px;vertical-align:top}
+.sweep{position:absolute;overflow:hidden}
+.sweep i{position:absolute;top:-20%;height:140%;width:110px;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.55),rgba(255,255,255,0));transform:skewX(-20deg)}
+.ring{position:absolute;box-sizing:border-box;border-radius:50%;border:2px solid #7fd0d8}
+.head{position:absolute;left:0;width:1920px;text-align:center;font-weight:600;letter-spacing:-0.01em}
+.head span{display:inline-block;margin:0 .14em}
+.patch{position:absolute;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);background:rgba(10,11,14,.35);border-radius:8px}
+#flash{position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,#fff 0%,#dff6f8 25%,#7fc9d2 55%,rgba(20,40,50,0) 100%);opacity:0}
+#black{position:absolute;inset:0;background:#000;opacity:0}
+#vig{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(0,0,0,0) 55%,rgba(0,0,0,.55) 100%);pointer-events:none}
+.tile{position:absolute;transform-origin:50% 50%}
+.chip{position:absolute;background:rgba(255,255,255,.86);color:#0a0b0e;font-weight:600;border-radius:5px;white-space:nowrap;backdrop-filter:blur(6px);box-shadow:0 2px 10px rgba(0,0,0,.35),inset 0 0 0 .5px rgba(255,255,255,.6)}
+</style></head>
+<body>
+<div id="stage">
+  <canvas id="stars" width="1920" height="1080"></canvas>
+
+  <div id="persp" class="abs" style="width:1920px;height:1080px;perspective:2600px;perspective-origin:960px 540px">
+  <!-- WORLD A: dashboard + send -->
+  <div id="wA" class="world">
+    <div class="card" id="cardA">
+      <img id="dash" src="assets/dash_base.jpg" style="left:0;top:0;width:1440px;height:832px">
+      <div class="t" id="bal" style="left:308px;top:174px;font-size:32px;line-height:49px">$15468.54</div>
+      <div class="sweep" id="shPoints" style="left:1164px;top:9.4px;width:93px;height:36px;border-radius:18px"><i></i></div>
+      <img id="btn0" src="assets/btn_send.png" style="left:308px;top:264px;width:193.75px;height:38px">
+      <img id="btn1" src="assets/btn_receive.png" style="left:517.75px;top:264px;width:193.75px;height:38px">
+      <img id="btn2" src="assets/btn_deposit.png" style="left:727.5px;top:264px;width:193.75px;height:38px">
+      <img id="btn3" src="assets/btn_swap.png" style="left:937.25px;top:264px;width:193.75px;height:38px">
+      <div class="sweep" id="shSend" style="left:308px;top:264px;width:193.75px;height:38px;border-radius:12px"><i></i></div>
+      <img id="sendbg" src="assets/send_bg.jpg" style="left:0;top:0;width:1440px;height:832px;opacity:0">
+      <div id="modal" class="abs" style="left:495px;top:175px;width:450px;height:482px;transform-origin:225px 241px">
+        <img id="mEmpty" src="assets/modal_empty.png" style="left:0;top:0;width:450px;height:482px">
+        <img id="mFull" src="assets/modal_full.png" style="left:0;top:0;width:450px;height:482px;opacity:0">
+        <div class="t" id="amt" style="left:28px;top:106px;font-size:26px;line-height:26px"></div>
+        <div class="t" id="usd" style="left:28px;top:148px;font-size:14px;line-height:14px;color:#b4b4b2"></div>
+        <div class="t" id="addr" style="left:63.3px;top:214.5px;font-size:16px;line-height:16px;font-weight:400;color:#b4b4b2"></div>
+        <div class="sweep" id="sweepA" style="left:0;top:427px;width:450px;height:55px;border-radius:0 0 12px 12px"><i></i></div>
+      </div>
+      <div id="stat" class="abs" style="left:494px;top:414px;width:451px;height:266px">
+        <img src="assets/stc1_clean.png" style="left:0;top:0;width:451px;height:266px">
+        <img id="stc2" src="assets/stc2_clean.png" style="left:0;top:0;width:451px;height:266px;opacity:0">
+        <img id="stc3" src="assets/stc3_clean.png" style="left:0;top:0;width:451px;height:266px;opacity:0">
+        <img id="stc4" src="assets/stc4_clean.png" style="left:0;top:0;width:451px;height:266px;opacity:0">
+        <svg id="spA" class="abs" width="20" height="20" viewBox="0 0 20 20" style="transform-origin:10px 10px"><circle cx="10" cy="10" r="8" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="1.8"/><path d="M10 2a8 8 0 0 1 8 8" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <div class="ring" id="ringA"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WORLD B: swap -->
+  <div id="wB" class="world">
+    <img src="assets/swap_base.jpg" style="left:0;top:0;width:1440px;height:832px">
+    <div id="scard" class="abs" style="left:495px;top:196px;width:450px;height:436px;transform-origin:50% 50%">
+      <img src="assets/swap_card.png" style="left:0;top:0;width:450px;height:436px">
+      <div id="flipW" class="abs" style="left:207px;top:123px;width:36px;height:36px;transform-origin:18px 18px">
+        <img src="assets/flip_base.png" style="left:0;top:0;width:36px;height:36px">
+        <svg id="arrows" class="abs" width="36" height="36" viewBox="0 0 36 36" style="transform-origin:18px 18px" fill="none" stroke="#6c7889" stroke-width="1.55" stroke-linecap="square" stroke-linejoin="miter">
+          <g id="arUp"><path d="M14.2 22.4V12.4"/><path d="M10.8 15.7L14.2 12.3L17.6 15.7"/></g>
+          <g id="arDn"><path d="M21.7 13.6V23.8"/><path d="M18.3 20.5L21.7 23.9L25.1 20.5"/></g>
+        </svg>
+      </div>
+      <div class="t" id="sFrom" style="left:28px;top:60px;font-size:26px;line-height:26px"></div>
+      <div class="t" id="sFromU" style="left:28px;top:102px;font-size:14px;line-height:14px;color:#b4b4b2"></div>
+      <div class="t" id="sTo" style="left:28px;top:198px;font-size:26px;line-height:26px"></div>
+      <div class="t" id="sToU" style="left:28px;top:240px;font-size:14px;line-height:14px;color:#b4b4b2"></div>
+      <div class="sweep" id="sweepB" style="left:0;top:381px;width:450px;height:55px;border-radius:0 0 24px 24px"><i></i></div>
+    </div>
+    <div id="swst" class="abs" style="left:494px;top:432px;width:452px;height:201px">
+      <img src="assets/swc1_clean.png" style="left:0;top:0;width:452px;height:201px">
+      <img id="swc2" src="assets/swc2_clean.png" style="left:0;top:0;width:452px;height:201px;opacity:0">
+      <img id="swc3" src="assets/swc3_clean.png" style="left:0;top:0;width:452px;height:201px;opacity:0">
+      <svg id="spB" class="abs" width="20" height="20" viewBox="0 0 20 20" style="transform-origin:10px 10px"><circle cx="10" cy="10" r="8" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="1.8"/><path d="M10 2a8 8 0 0 1 8 8" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <div class="ring" id="ringB"></div>
+    </div>
+  </div>
+
+  <!-- WORLD C: referral -->
+  <div id="wC" class="world" style="height:763px">
+    <img id="refbase" src="assets/ref_base.jpg" style="left:0;top:0;width:1440px;height:763px">
+    <img id="refbg" src="assets/ref_bg.jpg" style="left:0;top:0;width:1440px;height:763px;opacity:0">
+    <div id="pop" class="abs" style="left:525px;top:183px;width:390px;height:397px;transform-origin:195px 198.5px">
+      <img src="assets/popup.png" style="left:0;top:0;width:390px;height:397px">
+      <img id="tl0" class="tile" src="assets/tilefull_twitter.png" style="left:16px;top:167px;width:66px;height:86px;opacity:0">
+      <img id="tl1" class="tile" src="assets/tilefull_whatsapp.png" style="left:113.333px;top:167px;width:66px;height:86px;opacity:0">
+      <img id="tl2" class="tile" src="assets/tilefull_telegram.png" style="left:210.667px;top:167px;width:66px;height:86px;opacity:0">
+      <img id="tl3" class="tile" src="assets/tilefull_email.png" style="left:308px;top:167px;width:66px;height:86px;opacity:0">
+      <div class="sweep" id="shT0" style="left:20px;top:167px;width:58px;height:57px;border-radius:11px"><i></i></div>
+      <div class="sweep" id="shT1" style="left:117.3px;top:167px;width:58px;height:57px;border-radius:11px"><i></i></div>
+      <div class="sweep" id="shT2" style="left:214.7px;top:167px;width:58px;height:57px;border-radius:11px"><i></i></div>
+      <div class="sweep" id="shT3" style="left:312px;top:167px;width:58px;height:57px;border-radius:11px"><i></i></div>
+      <div id="copyok" class="abs" style="left:335px;top:119px;width:25px;height:25px;background:#111316;border-radius:6px;opacity:0">
+        <svg width="25" height="25" viewBox="0 0 25 25"><path d="M6 13.2l4.2 4.2L19 8.4" stroke="#ffffff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="chip" id="copied" style="left:312px;top:84px;font-size:11px;line-height:11px;padding:5px 7px;opacity:0">✓ Copied</div>
+    </div>
+  </div>
+
+  </div>
+  <!-- SCREEN SPACE -->
+  <div id="logo" class="abs" style="width:1920px;height:1080px;transform-origin:960px 540px">
+    <div id="glowL" class="abs" style="width:900px;height:900px;border-radius:50%;background:radial-gradient(circle,rgba(110,200,210,.45) 0%,rgba(230,150,90,.18) 35%,rgba(0,0,0,0) 70%)"></div>
+    <svg id="mark" class="abs" viewBox="0 0 88 88" style="overflow:visible">
+      <defs>
+        <linearGradient id="mg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6cc3cf"/><stop offset=".55" stop-color="#b9d9dc"/><stop offset="1" stop-color="#e3995f"/></linearGradient>
+        <linearGradient id="gl" x1="0" y1="0" x2="1" y2="1"><stop id="g0" offset="0" stop-color="#fff" stop-opacity="0"/><stop id="g1" offset=".1" stop-color="#fff" stop-opacity=".9"/><stop id="g2" offset=".2" stop-color="#fff" stop-opacity="0"/></linearGradient>
+      </defs>
+      <linearGradient id="sg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8fe0ea"/><stop offset="1" stop-color="#f0b27f"/></linearGradient>
+      <path id="markP" fill="url(#mg)"/>
+      <path id="markS" fill="none" stroke="url(#sg)" stroke-width="0.9" stroke-linejoin="round" pathLength="1" stroke-dasharray="1 1"/>
+      <path id="markG" fill="url(#gl)"/>
+    </svg>
+    <svg id="letters" class="abs" viewBox="0 0 566 98"></svg>
+    <div id="tag" class="head" style="font-weight:400;font-size:34px;color:rgba(255,255,255,.62);letter-spacing:.01em">Live on Canton Network</div>
+  </div>
+  <div id="h1" class="head" style="top:92px;font-size:60px"></div>
+  <div id="h2" class="head" style="top:24px;font-size:50px"></div>
+  <div id="card0" class="head" style="top:470px;font-size:104px;letter-spacing:-0.025em"></div>
+  <div id="card1" class="head" style="top:470px;font-size:104px;letter-spacing:-0.025em"></div>
+  <div id="card2" class="head" style="top:470px;font-size:104px;letter-spacing:-0.025em"></div>
+  <div id="cursor" class="abs" style="width:1px;height:1px">
+    <svg id="curArrow" class="abs" width="34" height="42" viewBox="0 0 18 22" style="left:-4px;top:-3px"><path d="M2 1.5L2 18.5L6.5 14.2L9.6 21L12.6 19.7L9.6 13H16L2 1.5Z" fill="#fff" stroke="#0A0B0E" stroke-width="1.3" stroke-linejoin="round"/></svg>
+    <svg id="curHand" class="abs" width="34" height="40" viewBox="0 0 24 28" style="left:-12.4px;top:-2.6px;opacity:0"><path d="M8.8 2.2c-1.1 0-2 .9-2 2v9.4l-1.4-1.3c-.8-.8-2.1-.8-2.9 0s-.8 2.1 0 2.9l5.4 5.8c1.2 1.3 2.8 2 4.5 2h2.4c3.4 0 6.2-2.8 6.2-6.2v-4.6c0-1.1-.9-2-2-2-.4 0-.8.1-1.1.3-.2-.9-1-1.6-2-1.6-.5 0-1 .2-1.4.5-.3-.8-1-1.3-1.9-1.3-.4 0-.8.1-1.1.3V4.2c0-1.1-.9-2-2-2z" fill="#fff" stroke="#0A0B0E" stroke-width="1.25" stroke-linejoin="round"/><path d="M10.8 12.2v4.2M13.9 12.8v3.6M16.9 13.4v3" stroke="#0A0B0E" stroke-width="1.05" stroke-linecap="round"/></svg>
+  </div>
+  <div id="flash"></div>
+  <div id="vig"></div>
+  <div id="black"></div>
+</div>
+<script src="node_modules/gsap/dist/gsap.min.js"></script>
+<script src="scene8.js"></script>
+</body></html>
