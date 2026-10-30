@@ -10,8 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "gsap": "^3.12.5",
-    "sharp": "^0.33.5",
-    "playwright": "1.63.0"
+    "playwright": "^1.63.0",
+    "sharp": "^0.33.5"
   },
   "private": true
 }

@@ -23,11 +23,13 @@ Every rendered version is in [`videos/`](videos/) — `Supanova_Demo_v1.mp4` …
 
 v1–v6 were rendered with the pre-v7 asset crops, kept in `assets_pre_v7/`. Each version is its own commit on `main` (commit messages start with the version number), so `git checkout <commit>` gives you that version's exact source.
 
-## Render
+## Render (Mac)
+
+Needs Node 18+, Python 3 and ffmpeg (`brew install node ffmpeg`), then:
 
 ```bash
 npm install                      # gsap, sharp, playwright
-npx playwright install chromium  # if Chromium isn't installed
+npx playwright install chromium
 npm run serve &                  # static server on 127.0.0.1:8123
 PAGE=index10.html node render.js video Supanova_Demo_v10.mp4 60 0 28.59
 ```
